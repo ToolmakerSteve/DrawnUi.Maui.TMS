@@ -83,33 +83,91 @@ public partial class SkiaView : SKCanvasView, ISkiaDrawable
 
 	private double _fpsAverage;
 	private int _fpsCount;
+	private double _sumSeconds;   // Accumulate over this time "window".
 	private long _lastFrameTimestamp;
+	private const double discardSeconds = 0.5;   // tms TODO: Adjust dynamically, once there is enough data. BETTER, be told when to ignore a frame.
+	private double _slowestTimeNotDiscarded = 0;
+	private double _fastestTime = double.MaxValue;
+	public static long GestureTimestamp;   // tms TODO: remove static when know how to find the active instance.
+	public static bool UserGestureSeen;
 
 	/// <summary>
 	/// Calculates the frames per second (FPS) and updates the rolling average FPS every 'averageAmount' frames.
 	/// </summary>
 	/// <param name="currentTimestamp">The current timestamp in nanoseconds.</param>
 	/// <param name="averageAmount">The number of frames over which to average the FPS. Default is 10.</param>
-	void CalculateFPS(long currentTimestamp, int averageAmount = 10)
+	void CalculateFPS(long currentTimestamp, int averageAmount = 10, double maxSeconds = 1.0)
 	{
-		// Convert nanoseconds to seconds for elapsed time calculation.
-		double elapsedSeconds = (currentTimestamp - _lastFrameTimestamp) / 1_000_000_000.0;
-		_lastFrameTimestamp = currentTimestamp;
-
-		double currentFps = 1.0 / elapsedSeconds;
-
-		_fpsAverage = ((_fpsAverage * _fpsCount) + currentFps) / (_fpsCount + 1);
-		_fpsCount++;
-
-		if (_fpsCount >= averageAmount)
-		{
-			_reportFps = _fpsAverage;
+		if (_lastFrameTimestamp == 0)
+		{	// First time called.
+			_lastFrameTimestamp = currentTimestamp;
+			_reportFps = 0;
 			_fpsCount = 0;
-			_fpsAverage = 0.0;
+			_sumSeconds = 0;
+			return;
+		}
+
+		long elapsedTicks = currentTimestamp - _lastFrameTimestamp;
+		_lastFrameTimestamp = currentTimestamp;
+		double elapsedSeconds = elapsedTicks / 1_000_000_000.0;
+		bool gestureSeen = UserGestureSeen;
+		UserGestureSeen = false;
+
+		const bool byTime = true;
+		if (byTime)
+		{
+			// P: "byTime" only makes sense when there is an animation loop forcing redraw continuously.
+			// If waiting for user input, there will be some very long frames.
+			// HACK: Throw out excessively long times.
+			// TODO: BETTER, would be to "know" whether we had been waiting, throw out the first "frame time".
+			if (gestureSeen || (elapsedSeconds > discardSeconds))
+			{
+				// Don't count this frame.
+				return;
+			}
+			// Remember extremes seen.
+			// FUTURE: Remember min/max each time window.
+			if (elapsedSeconds > _slowestTimeNotDiscarded)
+				_slowestTimeNotDiscarded = elapsedSeconds;
+			if (elapsedSeconds < _fastestTime)
+				_fastestTime = elapsedSeconds;
+
+			_fpsCount++;
+			_sumSeconds += elapsedSeconds;
+			if ((_fpsCount > averageAmount) || (_sumSeconds > maxSeconds))
+			{
+				_reportFps = _fpsCount / _sumSeconds;   // frames over seconds: what could be simpler?
+				_fpsCount = 0;
+				_sumSeconds = 0;
+			}
+		}
+		else
+		{   // Original code. Calcs so-called "currentFPS" each frame, averages those.
+			// Problem is this minimizes the weight of slow frames. Misleading answer if any very slow frames.
+			// An extreme example: Suppose one frame took 500ms, followed by 10 frames each taking 50 ms.
+			// That would be 11 frames in 1 sec. Instead of reporting "11 fps", this says:
+			// (1 * (2) + 10 * (20)) / 11 =  202 / 11 ~=  "18 fps". Big difference.
+			// Or the other extreme: one frame takes 1 ms, 59 frames each take 16 ms. That's 60 frames in ~1 sec or "60 fps".
+			// But this says: (1 * (1000) + 59 * (60)) / 60 ~= "76 fps". Not realistic.
+			// I even saw a number over 1000 fps briefly!
+			// Convert nanoseconds to seconds for elapsed time calculation.
+
+			double currentFps = 1.0 / elapsedSeconds;
+
+			_fpsAverage = ((_fpsAverage * _fpsCount) + currentFps) / (_fpsCount + 1);
+			_fpsCount++;
+
+			if (_fpsCount >= averageAmount)
+			{
+				_reportFps = _fpsAverage;
+				_fpsCount = 0;
+				_fpsAverage = 0.0;
+			}
 		}
 	}
 
 	public long FrameTime { get; protected set; }
+	public long EndDrawTime { get; protected set; }
 
 	public bool IsDrawing { get; protected set; }
 
@@ -145,6 +203,7 @@ public partial class SkiaView : SKCanvasView, ISkiaDrawable
 
 		}
 
+		EndDrawTime = Super.GetCurrentTimeNanos();
 		IsDrawing = false;
 	}
 

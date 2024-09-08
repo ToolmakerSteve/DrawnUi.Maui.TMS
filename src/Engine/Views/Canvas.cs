@@ -479,7 +479,10 @@ public class Canvas : DrawnView, IGestureListener
     /// <param name=""></param>
     public virtual void OnGestureEvent(TouchActionType type, TouchActionEventArgs args1, TouchActionResult touchAction)
     {
-        var args = SkiaGesturesParameters.Create(touchAction, args1);
+		SkiaView.GestureTimestamp = Super.GetCurrentTimeNanos();   // tms
+		SkiaView.UserGestureSeen = true;
+
+		var args = SkiaGesturesParameters.Create(touchAction, args1);
 
         if (args.Type == TouchActionResult.Panning)
         {
