@@ -89,9 +89,12 @@ public class SkiaLabelFps : SkiaLabel, ISkiaAnimator
         if (Superview == null)
             return;
 
-        Text = $"FPS: {Superview.FPS:00.0}";
+		if (Superview.MaxMS == 0)
+			Text = $"FPS: {Superview.FPS:00.0}";
+		else
+			Text = $" {Superview.FPS:00}, {Superview.MinMS,2:0}-{Superview.MaxMS:00} ";
 
-        UpdateForceRefresh();
+		UpdateForceRefresh();
         //if we had zero updates after 2secs just display a zero
         //if (_topParent.FPS > 1.0)
         //{

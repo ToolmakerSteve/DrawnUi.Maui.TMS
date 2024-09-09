@@ -79,6 +79,10 @@ public partial class SkiaView : SKCanvasView, ISkiaDrawable
 			return _reportFps;
 		}
 	}
+	public int MinMS => _reportMinMS;
+	public int MaxMS => _reportMaxMS;
+	private int _reportMinMS;
+	private int _reportMaxMS;
 
 
 	private double _fpsAverage;
@@ -99,11 +103,10 @@ public partial class SkiaView : SKCanvasView, ISkiaDrawable
 	void CalculateFPS(long currentTimestamp, int averageAmount = 10, double maxSeconds = 1.0)
 	{
 		if (_lastFrameTimestamp == 0)
-		{	// First time called.
+		{   // First time called.
 			_lastFrameTimestamp = currentTimestamp;
 			_reportFps = 0;
-			_fpsCount = 0;
-			_sumSeconds = 0;
+			_ClearFPSAccumulators();
 			return;
 		}
 
@@ -137,8 +140,9 @@ public partial class SkiaView : SKCanvasView, ISkiaDrawable
 			if ((_fpsCount > averageAmount) || (_sumSeconds > maxSeconds))
 			{
 				_reportFps = _fpsCount / _sumSeconds;   // frames over seconds: what could be simpler?
-				_fpsCount = 0;
-				_sumSeconds = 0;
+				_reportMinMS = (int)Math.Round(_fastestTime * 1000);
+				_reportMaxMS = (int)Math.Round(_slowestTimeNotDiscarded * 1000);
+				_ClearFPSAccumulators();
 			}
 		}
 		else
@@ -164,6 +168,14 @@ public partial class SkiaView : SKCanvasView, ISkiaDrawable
 				_fpsAverage = 0.0;
 			}
 		}
+	}
+
+	private void _ClearFPSAccumulators()
+	{
+		_fpsCount = 0;
+		_sumSeconds = 0;
+		_slowestTimeNotDiscarded = 0;
+		_fastestTime = double.MaxValue;
 	}
 
 	public long FrameTime { get; protected set; }

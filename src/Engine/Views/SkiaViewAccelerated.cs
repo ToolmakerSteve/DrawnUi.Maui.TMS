@@ -145,6 +145,10 @@ public partial class SkiaViewAccelerated : SKGLView, ISkiaDrawable
 			return _reportFps;
 		}
 	}
+	public int MinMS => _reportMinMS;
+	public int MaxMS => _reportMaxMS;
+	private int _reportMinMS;
+	private int _reportMaxMS;
 
 	public bool IsDrawing
 	{

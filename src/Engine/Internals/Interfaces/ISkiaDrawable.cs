@@ -12,8 +12,10 @@ public interface ISkiaDrawable : ISkiaSharpView, IDisposable
     public bool IsHardwareAccelerated { get; }
 
     public double FPS { get; }
+	public int MinMS { get; }
+	public int MaxMS { get; }
 
-    public bool IsDrawing { get; }
+	public bool IsDrawing { get; }
 
     long FrameTime { get; }
 }
