@@ -81,13 +81,18 @@ public partial class SkiaView : SKCanvasView, ISkiaDrawable
 	}
 	public int MinMS => _reportMinMS;
 	public int MaxMS => _reportMaxMS;
+	public int AvgDrawMS => _reportAvgDrawMS;
+	public int AvgMiscMS => _reportAvgMiscMS;
 	private int _reportMinMS;
 	private int _reportMaxMS;
-
+	private int _reportAvgDrawMS;
+	private int _reportAvgMiscMS;
 
 	private double _fpsAverage;
 	private int _fpsCount;
 	private double _sumSeconds;   // Accumulate over this time "window".
+	private double _sumDrawSeconds;   // Accumulate over this time "window".
+	private double _sumMiscSeconds;   // Accumulate over this time "window".
 	private long _lastFrameTimestamp;
 	private const double discardSeconds = 0.5;   // tms TODO: Adjust dynamically, once there is enough data. BETTER, be told when to ignore a frame.
 	private double _slowestTimeNotDiscarded = 0;
@@ -111,8 +116,16 @@ public partial class SkiaView : SKCanvasView, ISkiaDrawable
 		}
 
 		long elapsedTicks = currentTimestamp - _lastFrameTimestamp;
+		// REQUIRE values updated NOT during draw time.
+		long drawTicks = EndDrawTime - _lastFrameTimestamp;
+		long miscTicks = currentTimestamp - EndDrawTime;
+
 		_lastFrameTimestamp = currentTimestamp;
+
 		double elapsedSeconds = elapsedTicks / 1_000_000_000.0;
+		double drawSeconds = drawTicks / 1_000_000_000.0;
+		double miscSeconds = miscTicks / 1_000_000_000.0;
+
 		bool gestureSeen = UserGestureSeen;
 		UserGestureSeen = false;
 
@@ -137,11 +150,19 @@ public partial class SkiaView : SKCanvasView, ISkiaDrawable
 
 			_fpsCount++;
 			_sumSeconds += elapsedSeconds;
+			_sumDrawSeconds += drawSeconds;
+			_sumMiscSeconds += miscSeconds;
 			if ((_fpsCount > averageAmount) || (_sumSeconds > maxSeconds))
 			{
 				_reportFps = _fpsCount / _sumSeconds;   // frames over seconds: what could be simpler?
+				// ttttt: Lie; put ms into fps.
+				_reportFps = (int)Math.Round(1000 * _sumSeconds / _fpsCount);
+
 				_reportMinMS = (int)Math.Round(_fastestTime * 1000);
 				_reportMaxMS = (int)Math.Round(_slowestTimeNotDiscarded * 1000);
+				_reportAvgDrawMS = (int)Math.Round(1000 * _sumDrawSeconds / _fpsCount);
+				_reportAvgMiscMS = (int)Math.Round(1000 * _sumMiscSeconds / _fpsCount);
+
 				_ClearFPSAccumulators();
 			}
 		}
@@ -174,6 +195,8 @@ public partial class SkiaView : SKCanvasView, ISkiaDrawable
 	{
 		_fpsCount = 0;
 		_sumSeconds = 0;
+		_sumDrawSeconds = 0;
+		_sumMiscSeconds = 0;
 		_slowestTimeNotDiscarded = 0;
 		_fastestTime = double.MaxValue;
 	}

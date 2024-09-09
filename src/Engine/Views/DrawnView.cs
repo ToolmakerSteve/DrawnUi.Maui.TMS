@@ -1497,10 +1497,10 @@ namespace DrawnUi.Maui.Views
 				return CanvasView.FPS;
 			}
 		}
-		//public int CanvasMinMS => CanvasView == null ? 0 : CanvasView.MinMS;
-		//public int CanvasMaxMS => CanvasView == null ? 0 : CanvasView.MaxMS;
 		public int CanvasMinMS => CanvasView?.MinMS ?? 0;
 		public int CanvasMaxMS => CanvasView?.MaxMS ?? 0;
+		public int CanvasAvgDrawMS => CanvasView?.AvgDrawMS ?? 0;
+		public int CanvasAvgMiscMS => CanvasView?.AvgMiscMS ?? 0;
 
 
 		/// <summary>
@@ -1511,6 +1511,9 @@ namespace DrawnUi.Maui.Views
 		public int MinMS { get; protected set; }
 		/// <summary> Maximum Milliseconds. </summary>
 		public int MaxMS { get; protected set; }
+		public int AvgDrawMS { get; protected set; }
+		/// <summary> Maximum Milliseconds. </summary>
+		public int AvgMiscMS { get; protected set; }
 
 		#endregion
 
@@ -1638,6 +1641,8 @@ namespace DrawnUi.Maui.Views
 					FPS = CanvasFps;
 					MinMS = CanvasMinMS;
 					MaxMS = CanvasMaxMS;
+					AvgDrawMS = CanvasAvgDrawMS;
+					AvgMiscMS = CanvasAvgMiscMS;
 
 					CommitInvalidations();
 
