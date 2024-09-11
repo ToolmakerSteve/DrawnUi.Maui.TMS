@@ -84,7 +84,8 @@ namespace DrawnUi.Maui.Views
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
         protected void UpdatePlatform()
         {
-            IsDirty = true;
+			if (!IsDirty)
+	            IsDirty = true;
         }
 
         [MethodImpl(MethodImplOptions.AggressiveInlining)]

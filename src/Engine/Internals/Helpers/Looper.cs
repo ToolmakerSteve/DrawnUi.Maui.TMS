@@ -145,9 +145,9 @@ public class Looper : IDisposable
 
             var endFrameTimestamp = Stopwatch.GetTimestamp();
             var frameElapsedTicks = endFrameTimestamp - startFrameTimestamp;
-            var frameElapsedMs = (frameElapsedTicks / (double)Stopwatch.Frequency) * 1_000.0;
-            var totalElapsedMs = ((startFrameTimestamp - lastFrameTimestamp) / (double)Stopwatch.Frequency) * 1000;
-            var timeToWaitMs = targetIntervalMs - totalElapsedMs - frameElapsedMs;
+            var frameElapsedMs = (frameElapsedTicks / (double)Stopwatch.Frequency) * 1000.0;
+            var otherElapsedMs = ((startFrameTimestamp - lastFrameTimestamp) / (double)Stopwatch.Frequency) * 1000;
+            var timeToWaitMs = targetIntervalMs - otherElapsedMs - frameElapsedMs;
 
             if (timeToWaitMs < 1)
             {
@@ -156,6 +156,7 @@ public class Looper : IDisposable
 
             try
             {
+				//TMS Debug.WriteLine($"StartLooperAsync loop: frame={frameElapsedMs:0.000}, other={otherElapsedMs:0.000}, wait={timeToWaitMs:0.000} ms");
                 await Task.Delay(TimeSpan.FromMilliseconds(timeToWaitMs), cancellationToken);
             }
             catch

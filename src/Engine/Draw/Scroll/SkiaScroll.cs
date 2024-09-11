@@ -9,6 +9,8 @@ namespace DrawnUi.Maui.Draw
 	[ContentProperty("Content")]
 	public partial class SkiaScroll : SkiaControl, ISkiaGestureListener, IDefinesViewport
 	{
+		public static float DefaultMaxVelocity = 3000f;   // TMS
+
 		/// <summary>
 		/// Min velocity in points/sec to flee/swipe when finger is up
 		/// </summary>
@@ -688,6 +690,13 @@ namespace DrawnUi.Maui.Draw
 					ChildWasPanning = false;
 				}
 			}
+			
+			bool suppressVelocity = false;
+			if (IsTooFast(args.Event.Distance.Velocity))
+			{
+				var ms = args.Event.DeltaTimeMs;
+				//TMS suppressVelocity = true;
+			}
 
 			ISkiaGestureListener consumed = null;
 			if (Orientation == ScrollOrientation.Vertical || Orientation == ScrollOrientation.Both)
@@ -774,7 +783,8 @@ namespace DrawnUi.Maui.Draw
 						return null;
 					}
 
-					VelocityAccumulator.CaptureVelocity(new(VelocityX, VelocityY));
+					if (!suppressVelocity)
+						VelocityAccumulator.CaptureVelocity(new(VelocityX, VelocityY), args.Event.DeltaTimeMs);
 
 					var clamped = ClampOffset(moveTo.X, moveTo.Y);
 
@@ -964,6 +974,12 @@ namespace DrawnUi.Maui.Draw
 			return null;
 		}
 
+		// TMS
+		private bool IsTooFast(PointF velocity)
+		{
+			bool result = (Math.Abs(velocity.X) > MaxVelocity || Math.Abs(velocity.Y) > MaxVelocity);
+			return result;
+		}
 
 		public virtual bool OnFocusChanged(bool focus)
 		{
@@ -1289,7 +1305,7 @@ namespace DrawnUi.Maui.Draw
 			nameof(MaxVelocity),
 			typeof(float),
 			typeof(SkiaScroll),
-			3000f);
+			DefaultMaxVelocity);
 
 		/// <summary>
 		/// Limit user input velocity

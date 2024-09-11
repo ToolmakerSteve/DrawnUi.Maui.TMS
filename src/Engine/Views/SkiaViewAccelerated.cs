@@ -147,7 +147,7 @@ public partial class SkiaViewAccelerated : SKGLView, ISkiaDrawable
 	}
 	public int MinMS => _reportMinMS;
 	public int MaxMS => _reportMaxMS;
-	public int AvgDrawMS => 0;
+	public float AvgDrawMS => 0;
 	public int AvgMiscMS => 0;
 	private int _reportMinMS;
 	private int _reportMaxMS;

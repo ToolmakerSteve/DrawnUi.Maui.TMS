@@ -14,7 +14,7 @@ public interface ISkiaDrawable : ISkiaSharpView, IDisposable
     public double FPS { get; }
 	public int MinMS { get; }
 	public int MaxMS { get; }
-	public int AvgDrawMS { get; }
+	public float AvgDrawMS { get; }
 	public int AvgMiscMS { get; }
 
 	public bool IsDrawing { get; }

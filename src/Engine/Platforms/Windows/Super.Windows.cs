@@ -8,7 +8,9 @@ namespace DrawnUi.Maui.Draw
 {
     public partial class Super
     {
-        public static void Init()
+	    private static int TargetFps = 120;
+
+		public static void Init()
         {
             if (Initialized)
                 return;
@@ -29,10 +31,10 @@ namespace DrawnUi.Maui.Draw
                 OnFrame?.Invoke(null, null);
             });
 
-            Looper.StartOnMainThread(120);
+            Looper.StartOnMainThread(TargetFps);
         }
 
-        static Looper Looper { get; set; }
+		static Looper Looper { get; set; }
 
         public static event EventHandler OnFrame;
 

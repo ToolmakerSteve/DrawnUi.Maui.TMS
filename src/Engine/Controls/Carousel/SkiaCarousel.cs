@@ -1178,7 +1178,7 @@ public class SkiaCarousel : SnappingLayout
         }
 
         //record velocity
-        VelocityAccumulator.CaptureVelocity(velocity);
+        VelocityAccumulator.CaptureVelocity(velocity, args.Event.DeltaTimeMs);
 
         //saving non clamped
         _panningOffset.X = x;

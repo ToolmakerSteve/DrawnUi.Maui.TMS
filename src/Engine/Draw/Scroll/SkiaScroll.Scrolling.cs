@@ -7,6 +7,7 @@ namespace DrawnUi.Maui.Draw;
 
 public class VelocityAccumulator
 {
+	// TODO TMS: Want ms of event, to decide whether an extreme velocity is meaningful.
 	private List<(Vector2 velocity, DateTime time)> velocities = new List<(Vector2 velocity, DateTime time)>();
 	private const double Threshold = 10.0; // Minimum significant movement
 	private const int MaxSampleSize = 5; // Number of samples for weighted average
@@ -17,7 +18,7 @@ public class VelocityAccumulator
 		velocities.Clear();
 	}
 
-	public void CaptureVelocity(Vector2 velocity)
+	public void CaptureVelocity(Vector2 velocity, float deltaTimeMs)
 	{
 		var now = DateTime.UtcNow;
 		if (velocities.Count == MaxSampleSize) velocities.RemoveAt(0);
@@ -34,14 +35,21 @@ public class VelocityAccumulator
 		float weightedSumX = relevantVelocities.Select((v, i) => v.velocity.X * (i + 1)).Sum();
 		float weightedSumY = relevantVelocities.Select((v, i) => v.velocity.Y * (i + 1)).Sum();
 		var weightSum = Enumerable.Range(1, relevantVelocities.Count).Sum();
-
+		
+		
+		float avgX = weightedSumX / weightSum;
+		float avgY = weightedSumY / weightSum;
+		
+		float tooFast = 1000;   // ttttt
+		if (Math.Abs(avgX) > tooFast || Math.Abs(avgY) > tooFast)   // ttttt
+		{ }
 		if (clampAbsolute != 0)
 		{
-			return new Vector2(Math.Clamp(weightedSumX / weightSum, -clampAbsolute, clampAbsolute),
-				Math.Clamp(weightedSumY / weightSum, -clampAbsolute, clampAbsolute));
+			return new Vector2(Math.Clamp(avgX, -clampAbsolute, clampAbsolute),
+				Math.Clamp(avgY, -clampAbsolute, clampAbsolute));
 		}
 
-		return new Vector2(weightedSumX / weightSum, weightedSumY / weightSum);
+		return new Vector2(avgX, avgY);
 	}
 }
 
@@ -623,6 +631,7 @@ public partial class SkiaScroll
 		[MethodImpl(MethodImplOptions.AggressiveInlining)]
 		get
 		{
+			return false;   // ttttt
 			return OverscrollDistance != Vector2.Zero;
 		}
 	}
@@ -665,6 +674,7 @@ public partial class SkiaScroll
 
 	public Vector2 CalculateOverscrollDistance(float x, float y)
 	{
+		//return new Vector2(0, 0);  // ttttt: No bounce back?
 		float overscrollX = 0f;
 		float overscrollY = 0f;
 

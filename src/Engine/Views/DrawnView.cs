@@ -1499,7 +1499,7 @@ namespace DrawnUi.Maui.Views
 		}
 		public int CanvasMinMS => CanvasView?.MinMS ?? 0;
 		public int CanvasMaxMS => CanvasView?.MaxMS ?? 0;
-		public int CanvasAvgDrawMS => CanvasView?.AvgDrawMS ?? 0;
+		public float CanvasAvgDrawMS => CanvasView?.AvgDrawMS ?? 0;
 		public int CanvasAvgMiscMS => CanvasView?.AvgMiscMS ?? 0;
 
 
@@ -1511,7 +1511,7 @@ namespace DrawnUi.Maui.Views
 		public int MinMS { get; protected set; }
 		/// <summary> Maximum Milliseconds. </summary>
 		public int MaxMS { get; protected set; }
-		public int AvgDrawMS { get; protected set; }
+		public float AvgDrawMS { get; protected set; }
 		/// <summary> Maximum Milliseconds. </summary>
 		public int AvgMiscMS { get; protected set; }
 
