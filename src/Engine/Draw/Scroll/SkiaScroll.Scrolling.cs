@@ -40,9 +40,6 @@ public class VelocityAccumulator
 		float avgX = weightedSumX / weightSum;
 		float avgY = weightedSumY / weightSum;
 		
-		float tooFast = 1000;   // ttttt
-		if (Math.Abs(avgX) > tooFast || Math.Abs(avgY) > tooFast)   // ttttt
-		{ }
 		if (clampAbsolute != 0)
 		{
 			return new Vector2(Math.Clamp(avgX, -clampAbsolute, clampAbsolute),
@@ -674,7 +671,6 @@ public partial class SkiaScroll
 
 	public Vector2 CalculateOverscrollDistance(float x, float y)
 	{
-		//return new Vector2(0, 0);  // ttttt: No bounce back?
 		float overscrollX = 0f;
 		float overscrollY = 0f;
 

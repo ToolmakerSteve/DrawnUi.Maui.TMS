@@ -610,6 +610,7 @@ namespace DrawnUi.Maui.Draw
 
 		public override ISkiaGestureListener ProcessGestures(SkiaGesturesParameters args, GestureEventProcessingInfo apply)
 		{
+			Debug.WriteLine($"ProcessGestures @ {Superview.FrameTime}");
 			if (args.Type == TouchActionResult.Down)
 			{
 				lockHeader = false;

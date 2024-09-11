@@ -8,7 +8,7 @@ namespace DrawnUi.Maui.Draw
 {
     public partial class Super
     {
-	    private static int TargetFps = 120;
+	    private static int TargetFps = 60; //120;  TMS: At 120, when map not cached, GameLoop paint interferes with Scrolling. ProcessGestures can't run.
 
 		public static void Init()
         {

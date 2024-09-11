@@ -19,6 +19,14 @@ namespace DrawnUi.Maui.Views
 
 		public DiagnosticData Diagnostics = new();
 
+		// tms
+		public long _zeroTimeMillis;
+		public void ResetAppTime()
+		{
+			_zeroTimeMillis = Super.GetCurrentTimeMs();
+		}
+		public TimeSpan AppTime => TimeSpan.FromMilliseconds(Super.GetCurrentTimeMs() - _zeroTimeMillis);
+
 		public virtual void Update()
 		{
 			if (!Super.EnableRendering)

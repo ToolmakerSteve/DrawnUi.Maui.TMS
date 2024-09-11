@@ -214,6 +214,8 @@ namespace DrawnUi.Maui.Draw
 		protected virtual void OnLayoutChanged()
 		{
 			LayoutReady = this.Height > 0 && this.Width > 0;
+			if (this is SkiaLayout lay)
+			{ }
 			if (LayoutReady)
 			{
 				if (!CompareSize(DrawingRect.Size, _lastSize, 1))

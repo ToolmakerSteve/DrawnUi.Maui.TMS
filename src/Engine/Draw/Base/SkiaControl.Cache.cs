@@ -571,6 +571,8 @@ CachedObject reuseSurfaceFrom,
 		float widthRequest, float heightRequest,
 		SKRect destination, float scale)
 	{
+		if (this is SkiaLayout lay)
+		{}
 		Arrange(destination, widthRequest, heightRequest, scale);
 
 		bool willDraw = !CheckIsGhost();

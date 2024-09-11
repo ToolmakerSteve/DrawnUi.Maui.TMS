@@ -1687,6 +1687,8 @@ namespace DrawnUi.Maui.Draw
 			{
 				if (_height != value)
 				{
+					if (this is SkiaLayout lay)
+					{ }
 					_height = value;
 					OnPropertyChanged();
 				}
@@ -3175,6 +3177,8 @@ namespace DrawnUi.Maui.Draw
 			{
 				if (_layoutReady != value)
 				{
+					if (this is SkiaLayout lay)
+					{ }
 					_layoutReady = value;
 					OnPropertyChanged();
 					if (value)
