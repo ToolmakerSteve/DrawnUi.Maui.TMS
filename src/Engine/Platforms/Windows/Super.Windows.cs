@@ -8,7 +8,13 @@ namespace DrawnUi.Maui.Draw
 {
     public partial class Super
     {
-	    private static int TargetFps = 60; //120;  TMS: At 120, when map not cached, GameLoop paint interferes with Scrolling. ProcessGestures can't run.
+		//// 90 also worked well, when Paint2 quick. 60 allows for more Paint2 time. BUT maybe more dropped frames? TBD
+		//   private static int TargetFps = 60; //90; //60; //120; TMS: At 120, when map not cached, GameLoop paint interferes with Scrolling. ProcessGestures can't run.
+		//   //private const float TargetFMs = 15f; //8.333f; //15; //12; //20;
+		//   //private static int TargetFps = (int)(1000 / TargetFMs);
+
+		// Drawing whole bitmap too slow.
+		private static int TargetFps = 20; //35; //40;
 
 		public static void Init()
         {

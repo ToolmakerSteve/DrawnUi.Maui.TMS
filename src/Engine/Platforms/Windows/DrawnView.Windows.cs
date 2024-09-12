@@ -84,11 +84,10 @@ namespace DrawnUi.Maui.Views
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
         protected void UpdatePlatform()
         {
-			if (!IsDirty)
-	            IsDirty = true;
+	        IsDirty = true;
         }
 
-        [MethodImpl(MethodImplOptions.AggressiveInlining)]
+		[MethodImpl(MethodImplOptions.AggressiveInlining)]
         public bool CheckCanDraw()
         {
             return
@@ -122,6 +121,8 @@ namespace DrawnUi.Maui.Views
                     OrderedDraw = false;
                 }
             }
+			else
+				Debug.WriteLine("OnSuperFrame -- not ready");
         }
 
         protected virtual void DisposePlatform()

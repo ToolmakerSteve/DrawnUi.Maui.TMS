@@ -255,6 +255,17 @@ public partial class SkiaView : SKCanvasView, ISkiaDrawable
 		}
 
 		EndDrawTime = Super.GetCurrentTimeNanos();
+		
+		const bool HACK = false;
+		if (!HACK)
+			IsDrawing = false;
+		// tms HACK: Does this avoid starving mainthread?
+		else
+			/*DELIBERATE_OMISSION await */  DelayedEndDrawing();
+	}
+	private async Task DelayedEndDrawing()
+	{
+		await Task.Delay(1);
 		IsDrawing = false;
 	}
 
