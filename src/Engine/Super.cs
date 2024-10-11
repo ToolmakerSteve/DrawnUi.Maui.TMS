@@ -309,17 +309,21 @@ public partial class Super
 
 
         var disp = DeviceDisplay.Current.MainDisplayInfo;
-        // move to screen center
-        var x = (disp.Width / disp.Density - window.Width) / 2;
-        var y = (disp.Height / disp.Density - window.Height) / 2;
+		//// move to screen center
+		//var x = (disp.Width / disp.Density - window.Width) / 2;
+		//var y = (disp.Height / disp.Density - window.Height) / 2;
+
+		// tms: screen upper-left.
+		var x = 0;
+		var y = 0;
 
         //this crashes in NET8 for CATALYST so..
 #if !MACCATALYST
 
         window.Width = width;
         window.Height = height;
-        window.X = x;
-        window.Y = y;
+		window.X = x;
+		window.Y = y;
 
 #else
         
@@ -346,7 +350,7 @@ public partial class Super
 
 #if WINDOWS
 
-        if (isFixed)
+		if (isFixed)
         {
             var platformWindow = window.Handler?.PlatformView as Microsoft.Maui.MauiWinUIWindow;
             var hWnd = platformWindow.WindowHandle;
