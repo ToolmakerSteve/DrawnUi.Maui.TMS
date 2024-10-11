@@ -13,8 +13,10 @@ namespace DrawnUi.Maui.Draw
 		//   //private const float TargetFMs = 15f; //8.333f; //15; //12; //20;
 		//   //private static int TargetFps = (int)(1000 / TargetFMs);
 
-		// Drawing whole bitmap too slow.
-		private static int TargetFps = 20; //35; //40;
+		// TiledBitmap - 16ms. 50fps too fast; game loop takes tick (16ms). Now I'm confused. At 40 fps (25 ms), game loop still taking a lot of time.
+		// Ah: Must check when no Gesture or UpdateTransform.
+		// CONC: System forcing to multiple of 60. Therefore as soon as "miss", will get some slower loops. No good answer. At least we aren't "20 fps" anymore.
+		private static int TargetFps = 15; //30; //45; ///20; //35; //40;
 
 		public static void Init()
         {

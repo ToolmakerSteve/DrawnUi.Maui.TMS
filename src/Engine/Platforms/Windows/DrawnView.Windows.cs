@@ -121,9 +121,14 @@ namespace DrawnUi.Maui.Views
                     OrderedDraw = false;
                 }
             }
-			else
-				Debug.WriteLine("OnSuperFrame -- not ready");
-        }
+            else
+            {
+				if (!IsDirty)
+					Debug.WriteLine("OnSuperFrame -- !IsDirty");
+				else
+					Debug.WriteLine("OnSuperFrame -- not ready");
+            }
+		}
 
         protected virtual void DisposePlatform()
         {
