@@ -179,7 +179,9 @@ public partial class SkiaButton : SkiaLayout, ISkiaGestureListener
 				ret = true;
 				Tasks.StartDelayedAsync(TimeSpan.FromMilliseconds(DelayCallbackMs), async () =>
 				{
-					await Task.Run(() => { CommandTapped?.Execute(CommandTappedParameter); }).ConfigureAwait(false);
+					bool onMainThread2 = MainThread.IsMainThread;
+					//await Task.Run(() => { CommandTapped?.Execute(CommandTappedParameter); }).ConfigureAwait(false);
+					CommandTapped?.Execute(CommandTappedParameter);
 				});
 			}
 

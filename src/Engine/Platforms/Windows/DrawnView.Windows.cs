@@ -122,7 +122,7 @@ namespace DrawnUi.Maui.Views
                 }
             }
             else
-            {
+            {   // tmstest
 				if (!IsDirty)
 					Debug.WriteLine("OnSuperFrame -- !IsDirty");
 				else

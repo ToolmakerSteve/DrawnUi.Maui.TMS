@@ -466,6 +466,7 @@ namespace DrawnUi.Maui.Draw
 
 		public virtual Vector2 ClampOffset(float x, float y, bool strict = false)
 		{
+			return new Vector2 (x, y);   // ttttt - don't clamp. TBD: How specify "how much" allowed to scroll beyond bounds of map?
 			if (!Bounces || strict)
 			{
 				var clampedX = Math.Max(ContentOffsetBounds.Left, Math.Min(ContentOffsetBounds.Right, x));
@@ -3278,6 +3279,22 @@ namespace DrawnUi.Maui.Draw
 
 		#endregion
 
+
+		protected override void DrawingRectChanged(SKRect oldValue, SKRect newValue)
+		{
+			if (newValue.Left < 0)
+			{
+				if (oldValue.Left < 0)
+				{ }
+				else { }
+			}
+			else   // newValue.Left >= 0
+			{
+				if (oldValue.Left < 0)
+				{ }
+				else { }
+			}
+		}
 
 	}
 }

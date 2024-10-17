@@ -2657,6 +2657,9 @@ namespace DrawnUi.Maui.Draw
 			//    return new SKRect(0, 0, 0, 0);
 			//}
 
+			if (destination.Left < 0)
+			{ }
+
 			var rectAvailable = DefineAvailableSize(destination, widthRequest, heightRequest, scale);
 
 			var useMaxWidth = rectAvailable.Pixels.Width;
@@ -2927,6 +2930,8 @@ namespace DrawnUi.Maui.Draw
 
 		protected virtual void AdaptCachedLayout(SKRect destination, float scale)
 		{
+			if (destination.Left < 0)
+			{ }
 			//adapt cache to current request
 			var newDestination = ArrangedDestination;//.Clone();
 			newDestination.Offset(destination.Left, destination.Top);
@@ -2947,7 +2952,31 @@ namespace DrawnUi.Maui.Draw
 		/// <summary>
 		/// This is the destination in PIXELS with margins applied, using this to paint background. Since we enabled subpixel drawing (for smooth scroll etc) expect this to have non-rounded values, use CompareRects and similar for comparison.
 		/// </summary>
-		public SKRect DrawingRect { get; set; }
+		public SKRect DrawingRect
+		{
+			get => _drawingRect;
+			set
+			{
+				if (_drawingRect != value)
+				{
+					DrawingRectChanged(_drawingRect, value);
+					if (value.Left < 0)
+					{
+						__prevLeft = _drawingRect.Left;
+					}
+					else {
+						if (__prevLeft < 0)
+						{
+							__prevLeft = _drawingRect.Left;
+						}
+					}
+					_drawingRect = value;
+				}
+			}
+		}
+		private float __prevLeft;
+		private SKRect _drawingRect;
+		protected virtual void DrawingRectChanged(SKRect oldValue, SKRect newValue) { }
 
 		/// <summary>
 		/// Overriding VisualElement property, use DrawingRect instead.
@@ -3147,7 +3176,20 @@ namespace DrawnUi.Maui.Draw
 
 		long _layoutChanged = 0;
 
-		public SKRect ArrangedDestination { get; protected set; }
+		public SKRect ArrangedDestination
+		{
+			get => _arrangedDestination;
+			protected set
+			{
+				if (_arrangedDestination != value)
+				{
+					if (value.Left < 0)
+					{ }
+					_arrangedDestination = value;
+				}
+			}
+		}
+		private SKRect _arrangedDestination;
 
 		private SKSize _lastSize;
 
@@ -3729,7 +3771,8 @@ namespace DrawnUi.Maui.Draw
 
 		public virtual SKRect GetDrawingRectWithMargins(SKRect destination, double scale)
 		{
-
+			if (destination.Left < 0)
+			{ }
 
 			var constraintLeft = (float)Math.Round(Margins.Left * scale);
 			var constraintRight = (float)Math.Round(Margins.Right * scale);
@@ -6339,7 +6382,6 @@ namespace DrawnUi.Maui.Draw
 		private SKRect _lastArrangedInside;
 		private double _lastArrangedForScale;
 		private bool _needUpdateFrontCache;
-
 
 		public static Color GetRandomColor()
 		{
